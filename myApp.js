@@ -1,7 +1,7 @@
 require('dotenv').config();
 
 const mongoose = require('mongoose');
-mongoose.connect(process.env['MONGO_URI'],{ useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect(process.env['MONGO_URI'],{ useNewUrlParser: true });
 
 const { Schema } = mongoose;
 
@@ -57,9 +57,18 @@ const findPersonById = (personId, done) => {
 };
 
 const findEditThenSave = (personId, done) => {
-  const foodToAdd = "hamburger";
+   const foodToAdd = 'hamburger';
 
-  done(null /*, data*/);
+  Person.findById(personId, (err, person) => {
+    if(err) return console.log(err); 
+  
+    person.favoriteFoods.push(foodToAdd);
+
+    person.save((err, updatedPerson) => {
+      if(err) return console.log(err);
+      done(null, updatedPerson)
+    })
+  })
 };
 
 const findAndUpdate = (personName, done) => {
